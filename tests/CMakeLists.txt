@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.6)
 #SET(CMAKE_SYSTEM_NAME Linux)
 #SET(CMAKE_SYSTEM_VERSION 1)
 
-project(RS41ng_test C CXX)
+project(RS41LK_test C CXX)
 
 set(BINARY ${CMAKE_PROJECT_NAME})
 

@@ -1,4 +1,4 @@
-project(RS41ng C CXX)
+project(RS41LK C CXX)
 
 if (APPLE)
   set(TOOLCHAIN_PATH /Applications/ARM/bin)
