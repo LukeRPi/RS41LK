@@ -6,24 +6,6 @@ This is a custom firmware for [Vaisala RS41 radiosondes](https://www.vaisala.com
 The code is based on the RS41 firmware [RS41ng](https://github.com/mikaelnousiainen/RS41ng).
 
 
-## What are the Vaisala RS41 radiosondes and how can I get one?
-
-The RS41 radiosondes are used extensively for atmospheric sounding by the meteorological institutes in various countries and thus easily
-available to be collected once they land, an activity called radiosonde hunting: see YouTube presentation about
-[Tracking and Chasing Weather Balloons by Andreas Spiess](https://www.youtube.com/watch?v=vQfztG60umI) or
-[Chasing Radiosonde Weather Balloons used in Meteorology for Fun by Mark VK5QI](https://www.youtube.com/watch?v=fb9gNomWrAY)
-for more details!
-
-You can track radiosondes without any additional equipment either via [SondeHub](https://tracker.sondehub.org/) or [radiosondy.info](https://radiosondy.info/)
-that both use an existing network of receiver stations. Alternatively, you can set up your own radiosonde receiver station.
-
-For your own receiver station, you will need:
-
-1. A cheap software-defined radio USB dongle, such as an [RTL-SDR](https://www.rtl-sdr.com/about-rtl-sdr/)
-2. An antenna suitable for receiving the 400 MHz radiosonde band transmissions. Antennas for the 70 cm amateur radio band usually work fine!
-3. Radiosonde tracker software: common choices are [RS41 Tracker](http://escursioni.altervista.org/Radiosonde/) for Windows
-   and [radiosonde_auto_rx](https://github.com/projecthorus/radiosonde_auto_rx) for Linux / Raspberry Pi.
-
 ### What can I do with an RS41 radiosonde?
 
 The [Vaisala RS41 radiosondes](https://www.vaisala.com/en/products/instruments-sensors-and-other-measurement-devices/soundings-products/rs41)
@@ -51,12 +33,8 @@ The main features the RS41LK firmware are:
 * Support for multiple transmission modes:
   * Standard 1200-baud APRS
     * Option to transmit APRS weather reports using readings from an external BMP280 sensor
-  * [Horus 4FSK v1 and v2 modes](https://github.com/projecthorus/horusdemodlib/wiki) that has improved performance compared to APRS or RTTY
-    * There is an option to use continuous transmit mode (for either V1 or V2 mode), which helps with receiver frequency synchronization and improves reception.
   * Morse code (CW)
-  * JT65/JT9/JT4/FT8/WSPR/FSQ digital modes on HF/VHF amateur radio bands using an external Si5351 clock generator connected to the external I²C bus
-* Support for transmitting multiple modes consecutively with custom, rotating comment messages (see `config.c`)
-* Support for GPS-based scheduling is available for transmission modes that require specific timing for transmissions
+
 * Support for custom sensors via the external I²C bus
 * GPS NMEA data output via the external serial port pin 4 (see below). This disables use of I²C devices as the serial port pins are shared with the I²C bus pins.
   * This allows using the RS41 sonde GPS data in external tracker hardware, such as Raspberry Pi or other microcontrollers.
@@ -68,26 +46,14 @@ The main features the RS41LK firmware are:
 On the internal Si4032 transmitter:
 
 * APRS (1200 baud)
-* Horus 4FSK v1 and v2 (100 baud)
 * Morse code (CW)
 
-On an external Si5351 clock generator connected to the external I²C bus of the RS41 radiosonde:
-
-* Horus 4FSK v1 and v2 (50 baud, because the Si5351 frequency changes are slow)
-* JT65/JT9/JT4/FT8/WSPR/FSQ mode beacon transmissions using the JTEncode library. I've decoded FT8, WSPR and FSQ modes successfully.
-  * GPS-based scheduling is available for modes that require specific timing for transmissions
-* Morse code (CW)
 
 #### Notes about APRS
 
 * Bell 202 frequencies are generated via hardware PWM, but the symbol timing is created in a loop with delay
 * There is also code available to use DMA transfers for symbol timing to achieve greater accuracy, but I have not been able to get the timings working correctly
 
-#### Notes about Horus 4FSK
-
-* The Horus 4FSK v1 and v2 modes have significantly [improved performance compared to APRS or RTTY](https://github.com/projecthorus/horusdemodlib/wiki).
-* Use [horus-gui](https://github.com/projecthorus/horus-gui) software to receive the 4FSK mode and to submit packets to [Habhub](http://habhub.org/) high-altitude balloon tracking platform.
-* See [horus-gui installation and usage instructions](https://github.com/projecthorus/horusdemodlib/wiki/1.1-Horus-GUI-Reception-Guide-(Windows-Linux-OSX)) and [horusdemodlib](https://github.com/projecthorus/horusdemodlib) library that is responsible for demodulating the signal.
 
 ### External sensors
 
@@ -100,15 +66,7 @@ The following sensors are currently supported:
 Sensor driver code contributions are welcome!
 
 ### Planned features
-
-* Continuous transmission mode for Horus 4FSK
-* Configurable transmission frequencies and schedules based on location / altitude
 * Support for more I²C sensors
-* RTTY on both Si4032 (70 cm, non-standard shift) and Si5351 (HF + 2m) with configurable shift
-* Investigate possibility to implement 1200 bps Bell 202 modulation (and
-  possibly also 300 bps Bell 103 modulation) for APRS using Si5351,
-  this requires special handling to make Si5351 change frequency quickly
-    * See: https://github.com/etherkit/Si5351Arduino/issues/22
 
 ## Configuring the firmware
 
@@ -146,10 +104,9 @@ dnf install arm-none-eabi-gcc-cs arm-none-eabi-gcc-cs-c++ arm-none-eabi-binutils
 
 Hardware requirements:
 
-* A working [Vaisala RS41 radiosonde](https://www.vaisala.com/en/products/instruments-sensors-and-other-measurement-devices/soundings-products/rs41) :)
+* A working [Vaisala RS41 radiosonde](https://www.vaisala.com/en/products/instruments-sensors-and-other-measurement-devices/soundings-products/rs41)
 * An [ST-LINK v2 programmer for the STM32 microcontroller](https://www.st.com/en/development-tools/st-link-v2.html) in the RS41 radiosonde. 
   * These smaller [ST-LINK v2 USB dongles](https://www.adafruit.com/product/2548) also work well.
-  * [Partco sells the ST-LINK v2 USB dongles in Finland](https://www.partco.fi/en/measurement/debugging/20140-stlinkv2.html)
 
 The pinout of the RS41 connector (by DF8OE) is the following:
 
@@ -238,28 +195,6 @@ otherwise the firmware will not run.**
 To load debugging symbols for settings breakpoints and to perform more detailed inspection,
 use command `file src/RS41ng.elf`.
 
-## Si4032 Bell FSK modulation hack for APRS
-
-The idea behind the APRS / Bell 202 modulation implementation is based on RS41HUP project and its "ancestors"
-and I'm describing it here, since it has not been documented elsewhere.
-
-The Si4032 chip seems to support only a very specific type of FSK, where one can define two frequencies
-(on a 625 Hz granularity) that can be toggled by a register change. Because of the granularity, this mechanism cannot be directly
-used to generate Bell 202 tones.
-
-The way Bell 202 AFSK is implemented for Si4032 is kind of a hack, where the code toggles these two frequencies at
-a rate of 1200 and 2200 Hz, which produces the two Bell 202 tones even though the actual frequencies are something else.
-
-Additionally, the timing of 1200/2200 Hz was done in RS41HUP by using experimentally determined delays
-and by disabling all interrupts, so they won't interfere with the timings.
-
-I have attempted to implement Bell 202 frequency generation using hardware DMA and PWM, but have failed to generate
-correct symbol rate that other APRS equipment are able to decode. I have tried to decode the DMA-based modulation with
-some tools intended for debugging APRS and while some bytes are decoded correctly every once in a while,
-the timings are mostly off for some unknown reason.
-
-Currently, the Bell 202 modulation implementation uses hardware PWM to generate the individual tone frequencies,
-but the symbol timing is created in a loop with delay that was chosen carefully via experiments.
 
 ## Debugging APRS
 
@@ -286,29 +221,11 @@ rtl-sdr:
 rtl_fm -f 432500000 -M fm -s 250k -r 48000 -g 22 - | direwolf -n 1 -D 1 -r 48000 -b 16 -
 ```
 
-### SigPlay
-
-[SigPlay](https://bk.gnarf.org/creativity/sigplay/) is a set of tools for DSP and signal processing.
-SigPlay also includes a command-line tool to decode and print out raw data from Bell 202 encoding,
-which is really useful, as it allows you to see the bytes that actually get transmitted --
-even if the packet is not a valid APRS packet!
-
-rx_tools:
-
-```bash
-rx_fm -f 432500000 -M fm -s 250000 -r 48000 -g 22 -d driver=rtlsdr - | ./aprs -
-```
-
-rtl-sdr:
-
-```bash
-rtl_fm -f 432500000 -M fm -s 250k -r 48000 -g 22 - | ./aprs -
-```
 
 # Authors
 
-* Mikael Nousiainen OH3BHX <oh3bhx@sral.fi>
-* Original codebase: DF8OE and other authors of the [RS41HUP](https://github.com/df8oe/RS41HUP) project
+* Luca Stella
+* Original codebase: Mikael Nousiainen OH3BHX [RS41ng](https://github.com/mikaelnousiainen/RS41ng)
 * Horus 4FSK code adapted from [darksidelemm fork of RS41HUP](https://github.com/darksidelemm/RS41HUP) project
 
 # Additional documentation
