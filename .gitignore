@@ -7,3 +7,5 @@
 /.DS_Store
 /src/.vscode
 .vscode
+**/.vscode
+**/.DS_Store
